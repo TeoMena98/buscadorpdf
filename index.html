@@ -36,11 +36,34 @@
     <div class="card bg-secondary p-4 shadow-lg">
       <div class="row g-3">
 
-        <div class="col-md-6">
+
+        <div class="col-md-3">
+          <label class="form-label">Origen</label>
+          <select class="form-select" id="origen">
+            <option value="BOG">Bogotá (BOG)</option>
+            <option value="CLO">Cali (CLO)</option>
+            <option value="MDE" selected>Medellín (MDE)</option>
+            <option value="CTG">Cartagena (CTG)</option>
+            <option value="BAQ">Barranquilla (BAQ)</option>
+            <option value="BGA">Bucaramanga (BGA)</option>
+            <option value="LET">Leticia (LET)</option>
+            <option value="AXM">Armenia (AXM)</option>
+            <option value="PEI">Pereira (PEI)</option>
+            <option value="PSO">Pasto (PSO)</option>
+            <option value="PPN">Popayán (PPN)</option>
+            <option value="SMR">Santa Marta (SMR)</option>
+            <option value="MTR">Montería (MTR)</option>
+            <option value="RCH">Riohacha (RCH)</option>
+            <option value="MVP">Mitú (MVP)</option>
+            <option value="IBE">Ibagué (IBE)</option>
+            <option value="NVA">Neiva (NVA)</option>
+            <option value="CUC">Cúcuta (CUC)</option>
+          </select>
+        </div>
+        <div class="col-md-3">
           <label class="form-label">Destino</label>
           <input type="text" id="destino" class="form-control" placeholder="Ej: Cancún, Punta Cana, Brasil" />
         </div>
-
         <div class="col-md-6">
           <label class="form-label">Teléfono</label>
           <input type="text" id="telefono" class="form-control" placeholder="Ej: 573016119737" />
@@ -100,6 +123,7 @@
       const ninos = Number(document.getElementById("ninos").value);
       const infantes = Number(document.getElementById("infantes").value);
       const mes = document.getElementById("mes").value;
+      const origen = document.getElementById("origen").value;
       const resultados = document.getElementById("resultados");
       resultados.innerHTML = `
         <div class="text-center mt-4">
@@ -112,7 +136,7 @@
           method: "POST",
           headers: { "Content-Type": "application/json" },
 
-          body: JSON.stringify({ destino, telefono, adultos, ninos, infantes, mes })
+          body: JSON.stringify({ destino, telefono, adultos, ninos, infantes, mes, origen })
         });
 
         const data = await res.json();

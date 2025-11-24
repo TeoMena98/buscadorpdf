@@ -99,11 +99,14 @@ export default async function handler(req, res) {
         let adultosArchivo = null;
         let ninosArchivo = null;
         let infantesArchivo = null;
-
+        let origen = null;
         // procesar bloqueRaw
         if (bloqueRaw) {
           const bloques = bloqueRaw.split("_").filter(Boolean);
 
+          if (bloques.length >= 1) {
+            origen = bloques[0]; // ej: BOG, BGA, PEI, MDE
+          }
           // FECHAS
           if (bloques.length >= 2) {
             const fechasSeparadas = bloques[1].split("-");
@@ -139,6 +142,7 @@ export default async function handler(req, res) {
           id: file.id,
           archivo: file.name,
           destino: destinoFinal,
+          origen,
           telefonoArchivo,
           fechaIda,
           fechaRegreso,
@@ -203,6 +207,13 @@ export default async function handler(req, res) {
       if (infantes !== undefined && infantes !== "") {
         if (pdf.infantesArchivo !== Number(infantes)) return false;
       }
+      // ORIGEN (si viene un valor)
+      if (req.body.origen && req.body.origen.trim() !== "") {
+        if (!pdf.origen || pdf.origen.toUpperCase() !== req.body.origen.toUpperCase()) {
+          return false;
+        }
+      }
+
 
       // MES
       if (mesBuscado) {
