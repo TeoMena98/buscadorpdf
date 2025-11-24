@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <title>Buscador de Cotizaciones</title>
@@ -13,9 +14,11 @@
       background: #0d1117;
       color: #ffffff;
     }
+
     .card {
       border-radius: 12px;
     }
+
     .card:hover {
       transform: scale(1.02);
       transition: .2s ease-in-out;
@@ -43,19 +46,38 @@
           <input type="text" id="telefono" class="form-control" placeholder="Ej: 573001234567" />
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-2">
           <label class="form-label">Adultos</label>
           <input type="number" id="adultos" class="form-control" value="1" min="0" />
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-2">
           <label class="form-label">Niños</label>
           <input type="number" id="ninos" class="form-control" value="0" min="0" />
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-2">
           <label class="form-label">Infantes</label>
           <input type="number" id="infantes" class="form-control" value="0" min="0" />
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Mes (opcional)</label>
+          <select id="mes" class="form-select">
+            <option value="">-- Cualquier mes --</option>
+            <option value="ene">Enero</option>
+            <option value="feb">Febrero</option>
+            <option value="mar">Marzo</option>
+            <option value="abr">Abril</option>
+            <option value="may">Mayo</option>
+            <option value="jun">Junio</option>
+            <option value="jul">Julio</option>
+            <option value="ago">Agosto</option>
+            <option value="sep">Septiembre</option>
+            <option value="oct">Octubre</option>
+            <option value="nov">Noviembre</option>
+            <option value="dic">Diciembre</option>
+          </select>
         </div>
 
       </div>
@@ -77,7 +99,7 @@
       const adultos = Number(document.getElementById("adultos").value);
       const ninos = Number(document.getElementById("ninos").value);
       const infantes = Number(document.getElementById("infantes").value);
-
+      const mes = document.getElementById("mes").value;
       const resultados = document.getElementById("resultados");
       resultados.innerHTML = `
         <div class="text-center mt-4">
@@ -89,7 +111,8 @@
         const res = await fetch("/api/buscar", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ destino, telefono, adultos, ninos, infantes }),
+
+          body: JSON.stringify({ destino, telefono, adultos, ninos, infantes, mes })
         });
 
         const data = await res.json();
@@ -141,4 +164,5 @@
   </script>
 
 </body>
+
 </html>
