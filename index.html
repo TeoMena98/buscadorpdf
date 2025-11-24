@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Buscador de Cotizaciones</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+</head>
+<body class="bg-dark text-white">
+  <div class="container py-5">
+    <h1 class="text-center mb-4">
+      <i class="bi bi-file-earmark-search"></i> Buscar Cotizaciones en Drive
+    </h1>
+    <div class="card bg-secondary p-4 shadow-lg">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Teléfono</label>
+          <input type="text" id="telefono" class="form-control" placeholder="Ej: 573001234567" />
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Adultos</label>
+          <input type="number" id="adultos" class="form-control" value="1" min="1" />
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Niños</label>
+          <input type="number" id="ninos" class="form-control" value="0" min="0" />
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Infantes</label>
+          <input type="number" id="infantes" class="form-control" value="0" min="0" />
+        </div>
+      </div>
+      <button id="btnBuscar" class="btn btn-warning w-100 mt-3">
+        <i class="bi bi-search"></i> Buscar Cotización
+      </button>
+    </div>
+    <div id="resultados" class="mt-4"></div>
+  </div>
+<script>
+document.getElementById("btnBuscar").addEventListener("click", async () => {
+  const telefono = document.getElementById("telefono").value.trim();
+  const adultos = Number(document.getElementById("adultos").value);
+  const ninos = Number(document.getElementById("ninos").value);
+  const infantes = Number(document.getElementById("infantes").value);
+
+  const resultados = document.getElementById("resultados");
+  resultados.innerHTML = \`
+    <div class="text-center mt-4">
+      <div class="spinner-border text-warning"></div>
+      <p class="mt-2">Buscando archivos...</p>
+    </div>\`;
+
+  try {
+    const res = await fetch("/api/buscar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ telefono, adultos, ninos, infantes }),
+    });
+
+    const data = await res.json();
+
+    if (!data.length) {
+      resultados.innerHTML = \`
+        <div class="alert alert-danger">
+          <i class="bi bi-x-circle"></i> No se encontraron PDF que coincidan.
+        </div>\`;
+      return;
+    }
+
+    let html = \`<h3 class="mb-3"><i class="bi bi-list-check"></i> Resultados:</h3>\`;
+
+    html += \`<div class="row g-3">\`;
+
+    data.forEach((pdf) => {
+      html += \`
+      <div class="col-md-6">
+        <div class="card bg-secondary text-white p-3 shadow">
+          <h5><i class="bi bi-file-earmark-pdf"></i> \${pdf.archivo}</h5>
+          <p class="mb-1"><strong>Destino:</strong> \${pdf.destino}</p>
+          <p class="mb-1"><strong>Fechas:</strong> \${pdf.fechaIda} → \${pdf.fechaRegreso}</p>
+          <p class="mb-1"><strong>Pax:</strong> \${pdf.adultos_archivo}A - \${pdf.ninos_archivo}K - \${pdf.infantes_archivo}I</p>
+          <a href="\${pdf.link}" target="_blank" class="btn btn-warning mt-2 w-100">
+            <i class="bi bi-box-arrow-up-right"></i> Abrir PDF
+          </a>
+        </div>
+      </div>\`;
+    });
+
+    html += \`</div>\`;
+    resultados.innerHTML = html;
+
+  } catch (error) {
+    resultados.innerHTML = \`
+      <div class="alert alert-danger">
+        Error al consultar la API: \${error.message}
+      </div>\`;
+  }
+});
+</script>
+</body>
+</html>
