@@ -115,6 +115,27 @@
   </div>
 
   <script>
+    const MAPA_ORIGENES = {
+      BOG: "Bogotá",
+      CLO: "Cali",
+      MDE: "Medellín",
+      CTG: "Cartagena",
+      BAQ: "Barranquilla",
+      BGA: "Bucaramanga",
+      LET: "Leticia",
+      AXM: "Armenia",
+      PEI: "Pereira",
+      PSO: "Pasto",
+      PPN: "Popayán",
+      SMR: "Santa Marta",
+      MTR: "Montería",
+      RCH: "Riohacha",
+      MVP: "Mitú",
+      IBE: "Ibagué",
+      NVA: "Neiva",
+      CUC: "Cúcuta"
+    };
+
     document.getElementById("btnBuscar").addEventListener("click", async () => {
 
       const destino = document.getElementById("destino").value.trim();
@@ -159,7 +180,7 @@
         <h5>
           <i class="bi bi-file-earmark-pdf"></i> ${pdf.archivo}
         </h5>
- <p class="mb-1"><strong>Origen:</strong> ${pdf.origen}</p>
+ <p class="mb-1"><strong>Origen:</strong> ${MAPA_ORIGENES[pdf.origen] || pdf.origen}</p>
         <p class="mb-1"><strong>Destino:</strong> ${pdf.destino}</p>
         <p class="mb-1"><strong>Fechas:</strong> ${pdf.fechaIda ?? "N/A"} → ${pdf.fechaRegreso ?? "N/A"}</p>
         <p class="mb-1"><strong>Pasajeros:</strong> 

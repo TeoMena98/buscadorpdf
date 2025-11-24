@@ -53,27 +53,6 @@ export default async function handler(req, res) {
     dic: "dic", diciembre: "dic"
   };
 
-  const MAPA_ORIGENES = {
-    BOG: "Bogotá",
-    CLO: "Cali",
-    MDE: "Medellín",
-    CTG: "Cartagena",
-    BAQ: "Barranquilla",
-    BGA: "Bucaramanga",
-    LET: "Leticia",
-    AXM: "Armenia",
-    PEI: "Pereira",
-    PSO: "Pasto",
-    PPN: "Popayán",
-    SMR: "Santa Marta",
-    MTR: "Montería",
-    RCH: "Riohacha",
-    MVP: "Mitú",
-    IBE: "Ibagué",
-    NVA: "Neiva",
-    CUC: "Cúcuta"
-  };
-
   // Normalizamos el mes del filtro
   const mesFiltroNorm = normalize(mes);
   const mesBuscado = MAPA_MESES[mesFiltroNorm] || null;
@@ -163,7 +142,7 @@ export default async function handler(req, res) {
           id: file.id,
           archivo: file.name,
           destino: destinoFinal,
-          origen: MAPA_ORIGENES[origen] || origen,
+          origen,
           telefonoArchivo,
           fechaIda,
           fechaRegreso,
