@@ -160,9 +160,18 @@ export default async function handler(req, res) {
       }
 
       // adultos
-      if (adultos !== undefined && adultos !== "") {
-        if (pdf.adultosArchivo !== Number(adultos)) return false;
+      // adultos (0 = ignorar filtro)
+      if (
+        typeof adultos !== "undefined" &&
+        adultos !== "" &&
+        adultos !== null &&
+        Number(adultos) > 0
+      ) {
+        if (pdf.adultosArchivo === null || pdf.adultosArchivo !== Number(adultos)) {
+          return false;
+        }
       }
+
 
       // ninos
       if (ninos !== undefined && ninos !== "") {
@@ -177,7 +186,7 @@ export default async function handler(req, res) {
       // MES
       if (mesBuscado) {
         if (!pdf.mesIda) return false;
-        if (!pdf.mesIda.startsWith(mesBuscado)) return false; 
+        if (!pdf.mesIda.startsWith(mesBuscado)) return false;
       }
 
       return true;
