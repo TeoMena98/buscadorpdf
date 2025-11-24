@@ -128,28 +128,31 @@
 
         let html = `<h3 class="mb-3"><i class="bi bi-list-check"></i> Resultados encontrados:</h3>`;
         html += `<div class="row g-3">`;
-
         data.forEach(pdf => {
           html += `
-            <div class="col-md-6">
-              <div class="card bg-secondary text-white p-3 shadow">
-                <h5>
-                  <i class="bi bi-file-earmark-pdf"></i> ${pdf.archivo}
-                </h5>
-                <p class="mb-1"><strong>Destino:</strong> ${pdf.destino}</p>
-                <p class="mb-1"><strong>Fechas:</strong> ${pdf.fechaIda ?? "N/A"} → ${pdf.fechaRegreso ?? "N/A"}</p>
-                <p class="mb-1"><strong>Pasajeros:</strong> 
-                  ${pdf.adultosArchivo}A - ${pdf.ninosArchivo}K - ${pdf.infantesArchivo}I
-                </p>
-                <p class="mb-1"><strong>Teléfono:</strong> ${pdf.telefonoArchivo}</p>
+    <div class="col-md-6">
+      <div class="card bg-secondary text-white p-3 shadow">
+        <h5>
+          <i class="bi bi-file-earmark-pdf"></i> ${pdf.archivo}
+        </h5>
 
-                <a href="${pdf.link}" target="_blank" class="btn btn-warning mt-2 w-100">
-                  <i class="bi bi-box-arrow-up-right"></i> Abrir PDF
-                </a>
-              </div>
-            </div>
-          `;
+        <p class="mb-1"><strong>Destino:</strong> ${pdf.destino}</p>
+        <p class="mb-1"><strong>Fechas:</strong> ${pdf.fechaIda ?? "N/A"} → ${pdf.fechaRegreso ?? "N/A"}</p>
+        <p class="mb-1"><strong>Pasajeros:</strong> 
+          ${pdf.adultosArchivo}A - ${pdf.ninosArchivo}K - ${pdf.infantesArchivo}I
+        </p>
+        <p class="mb-1"><strong>Teléfono:</strong> ${pdf.telefonoArchivo}</p>
+
+        <p class="mb-1"><strong>Fecha Creación:</strong> ${pdf.createdTime}</p>
+
+        <a href="${pdf.link}" target="_blank" class="btn btn-warning mt-2 w-100">
+          <i class="bi bi-box-arrow-up-right"></i> Abrir PDF
+        </a>
+      </div>
+    </div>
+  `;
         });
+
 
         html += `</div>`;
         resultados.innerHTML = html;
