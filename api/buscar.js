@@ -1,4 +1,24 @@
 // /api/buscar.js
+
+function formatearFecha12h(fechaISO) {
+  if (!fechaISO) return null;
+  const fecha = new Date(fechaISO);
+
+  const dia = String(fecha.getDate()).padStart(2, '0');
+  const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+  const año = fecha.getFullYear();
+
+  let horas = fecha.getHours();
+  const minutos = String(fecha.getMinutes()).padStart(2, '0');
+
+  const ampm = horas >= 12 ? 'PM' : 'AM';
+  horas = horas % 12;
+  horas = horas ? horas : 12; // convertir 0 → 12
+
+  horas = String(horas).padStart(2, '0');
+
+  return `${dia}/${mes}/${año} ${horas}:${minutos} ${ampm}`;
+}
 export default async function handler(req, res) {
   const folderId = "1HL5lFce29wBN17LAEv3ACvczRPb4aV5m";
 
@@ -38,7 +58,7 @@ export default async function handler(req, res) {
   const mesBuscado = MAPA_MESES[mesFiltroNorm] || null;
 
   try {
-    const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}' in parents and mimeType='application/pdf'&fields=files(id,name)&supportsAllDrives=true&includeItemsFromAllDrives=true&key=${process.env.GOOGLE_API_KEY}`;
+    const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}' in parents and mimeType='application/pdf'&fields=files(id,name,createdTime)&supportsAllDrives=true&includeItemsFromAllDrives=true&key=${process.env.GOOGLE_API_KEY}`;
 
     const response = await fetch(url);
     const data = await response.json();
@@ -126,6 +146,7 @@ export default async function handler(req, res) {
           ninosArchivo,
           infantesArchivo,
           link: `https://drive.google.com/file/d/${file.id}/view`,
+          createdTime: formatearFecha12h(file.createdTime),
           valido: true,
 
           // extra: mes detectado para filtrarlo
