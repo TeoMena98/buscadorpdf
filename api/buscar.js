@@ -19,44 +19,97 @@ export default async function handler(req, res) {
 
     // PROCESAR ARCHIVOS
     const procesados = data.files.map(file => {
-      const partes = file.name.replace(".pdf", "").split(" ");
+      try {
+        const clean = file.name.replace(".pdf", "");
+        const partes = clean.split(" ");
 
-      // ejemplo:
-      // Cotizacion Punta Cana 573004738256 BOG_25-Mar-29-Mar_2A0K0I
-      const destino = partes[1] + " " + partes[2];
-      const telefonoArchivo = partes[3];
+        // BUSCAR TELÉFONO (primer bloque solo números)
+        const telefonoIndex = partes.findIndex(p => /^[0-9]+$/.test(p));
+        const telefonoArchivo = telefonoIndex >= 0 ? partes[telefonoIndex] : null;
 
-      const fechasPax = partes[4].split("_");
+        // BUSCAR FECHAS (bloque que contiene '_' y '-')
+        const fechaIndex = partes.findIndex(p => p.includes("_") && p.includes("-"));
+        const fechasRaw = fechaIndex >= 0 ? partes[fechaIndex] : null;
 
-      const fechas = fechasPax[1].split("-");
-      const fechaIda = fechasPax[1];
-      const fechaRegreso = fechasPax[2];
+        // BUSCAR PAX (bloque tipo 2A0K0I)
+        const paxIndex = partes.findIndex(p => /A.*K.*I/i.test(p));
+        const paxString = paxIndex >= 0 ? partes[paxIndex] : null;
 
-      const paxString = partes[5];
-      const adultosArchivo = parseInt(paxString[0]);
-      const ninosArchivo = parseInt(paxString[2]);
-      const infantesArchivo = parseInt(paxString[4]);
+        // EXTRAER DESTINO (variable en cantidad de palabras)
+        let destino = null;
+        if (telefonoIndex > 1) {
+          destino = partes.slice(1, telefonoIndex).join(" ");
+        }
 
-      return {
-        id: file.id,
-        archivo: file.name,
-        destino,
-        telefonoArchivo,
-        fechaIda,
-        fechaRegreso,
-        adultosArchivo,
-        ninosArchivo,
-        infantesArchivo,
-        link: `https://drive.google.com/file/d/${file.id}/view`
-      };
+        // EXTRAER FECHAS
+        let fechaIda = null;
+        let fechaRegreso = null;
+
+        if (fechasRaw) {
+          const pedazos = fechasRaw.split("_");
+          if (pedazos.length >= 2) {
+            const fechas = pedazos[1].split("-");
+            if (fechas.length >= 2) {
+              fechaIda = fechas[0];
+              fechaRegreso = fechas[1];
+            }
+          }
+        }
+
+        // EXTRAER PAX
+        let adultosArchivo = null;
+        let ninosArchivo = null;
+        let infantesArchivo = null;
+
+        if (paxString) {
+          const paxMatch = paxString.match(/(\d)A(\d)K(\d)I/i);
+          if (paxMatch) {
+            adultosArchivo = parseInt(paxMatch[1]);
+            ninosArchivo = parseInt(paxMatch[2]);
+            infantesArchivo = parseInt(paxMatch[3]);
+          }
+        }
+
+        return {
+          id: file.id,
+          archivo: file.name,
+          destino,
+          telefonoArchivo,
+          fechaIda,
+          fechaRegreso,
+          adultosArchivo,
+          ninosArchivo,
+          infantesArchivo,
+          link: `https://drive.google.com/file/d/${file.id}/view`,
+          valido: true
+        };
+
+      } catch (err) {
+        return {
+          id: file.id,
+          archivo: file.name,
+          valido: false,
+          errorParseo: err.message,
+          link: `https://drive.google.com/file/d/${file.id}/view`
+        };
+      }
     });
 
-    // FILTROS
+    // FILTROS SEGUROS
     const filtrados = procesados.filter(pdf => {
-      if (telefono && !pdf.telefonoArchivo.includes(telefono)) return false;
-      if (adultos !== undefined && adultos !== pdf.adultosArchivo) return false;
-      if (ninos !== undefined && ninos !== pdf.ninosArchivo) return false;
-      if (infantes !== undefined && infantes !== pdf.infantesArchivo) return false;
+      if (!pdf.valido) return false;
+
+      if (telefono && telefono.trim() !== "" && !pdf.telefonoArchivo?.includes(telefono))
+        return false;
+
+      if (adultos !== undefined && adultos !== "" && pdf.adultosArchivo !== adultos)
+        return false;
+
+      if (ninos !== undefined && ninos !== "" && pdf.ninosArchivo !== ninos)
+        return false;
+
+      if (infantes !== undefined && infantes !== "" && pdf.infantesArchivo !== infantes)
+        return false;
 
       return true;
     });
