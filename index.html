@@ -40,9 +40,10 @@
         <div class="col-md-3">
           <label class="form-label">Origen</label>
           <select class="form-select" id="origen">
+            <option value="" selected>Elige origen</option>
             <option value="BOG">Bogotá (BOG)</option>
             <option value="CLO">Cali (CLO)</option>
-            <option value="MDE" selected>Medellín (MDE)</option>
+            <option value="MDE">Medellín (MDE)</option>
             <option value="CTG">Cartagena (CTG)</option>
             <option value="BAQ">Barranquilla (BAQ)</option>
             <option value="BGA">Bucaramanga (BGA)</option>
@@ -60,10 +61,16 @@
             <option value="CUC">Cúcuta (CUC)</option>
           </select>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-6">
           <label class="form-label">Destino</label>
-          <input type="text" id="destino" class="form-control" placeholder="Ej: Cancún, Punta Cana, Brasil" />
+          <select class="form-select" id="destino">
+            <option value="">Elige destino</option>
+            <option value="Punta Cana">Punta Cana</option>
+            <option value="Cancún">Cancún</option>
+            <option value="Brasil">Brasil</option>
+          </select>
         </div>
+
         <div class="col-md-6">
           <label class="form-label">Teléfono</label>
           <input type="text" id="telefono" class="form-control" placeholder="Ej: 573016119737" />
